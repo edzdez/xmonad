@@ -1,3 +1,13 @@
+#+TITLE: XMonad Config
+#+DESCRIPTION: A literate config for XMonad
+#+AUTHOR: Ethan Zhang
+#+PROPERTY: header-args :tangle xmonad.hs
+
+* TODOS:
+- [ ] Scratchpads
+
+* Imports
+#+BEGIN_SRC haskell
 import XMonad hiding ( (|||) )
 import System.Exit
 import System.IO
@@ -21,10 +31,17 @@ import XMonad.Util.Ungrab
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
+#+END_SRC
 
+* Workspace Names
+#+BEGIN_SRC haskell
 myWorkspaces :: [[Char]]
 myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
+#+END_SRC
 
+* Theme for ShowWName
+This specifies the theme for ShowWName, which prints the current workspace when changing workspaces
+#+BEGIN_SRC haskell
 myShowWNameTheme :: SWNConfig
 myShowWNameTheme = def
     { swn_font              = "xft:Jetbrains Mono:bold:size=48"
@@ -33,10 +50,20 @@ myShowWNameTheme = def
     , swn_color             = "#eceff4"
     }
 
+#+END_SRC
+
+* Hooks
+** Startup hook:
+This runs whenever XMonad is started
+#+BEGIN_SRC haskell
 myStartup :: X ()
 myStartup = do
     spawn "$HOME/.local/share/xmonad/autostart.sh"
+#+END_SRC
 
+** Layout hook:
+This describes the layouts that XMonad arranges windows in
+#+BEGIN_SRC haskell
 myLayout = avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| Full
   where
      -- default tiling algorithm partitions the screen into two panes
@@ -48,9 +75,17 @@ myLayout = avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| Full
      ratio   = 1/2
      -- Percent of screen to increment by when resizing panes
      delta   = 5/100
+#+END_SRC
 
+** Event hook:
+I use this to add window swallowing when spawning GUI apps from a terminal
+#+BEGIN_SRC haskell
 myEvent = swallowEventHook (className =? "Alacritty" <||> className =? "Kitty") (return True)
+#+END_SRC
 
+** Manage hook:
+This is used for window management
+#+BEGIN_SRC haskell
 myManage :: ManageHook
 myManage = composeAll
     [
@@ -60,7 +95,11 @@ myManage = composeAll
         -- Make GColor always float
         className =? "Gcolor3" --> doFloat
     ]
+#+END_SRC
 
+* Main function
+** Spawns XMonad and assigns some variables
+#+BEGIN_SRC haskell
 main :: IO ()
 main = do
     xmonad $ ewmhFullscreen . ewmh . docks $ def
@@ -88,7 +127,10 @@ main = do
             -- Set log hook
             logHook = dynamicLogWithPP $ def { ppOutput = writeFile "/home/edzdez/.config/xmonad/xmonad.log" }
         }
+#+END_SRC
 
+** Removes default keybindings
+#+BEGIN_SRC haskell
         `removeKeys`
         [
             -- Unbind default terminal binding
@@ -126,7 +168,10 @@ main = do
             -- Unbind default recompile keybind
             (mod4Mask, xK_q)
         ]
+#+END_SRC
 
+** New Keybindings
+#+BEGIN_SRC haskell
         `additionalKeys`
         [
             -- Spawn dmenu
@@ -194,3 +239,4 @@ main = do
             -- Quit XMonad
             ((mod4Mask .|. mod1Mask, xK_e), io (exitWith ExitSuccess))
         ]
+#+END_SRC

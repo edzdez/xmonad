@@ -17,7 +17,7 @@
 ;==========================================================
 
 [colors]
-background = #3b4252
+background = #d02e3440
 background-alt = #88c0d0
 foreground = #eceff4
 foreground-alt = #2e3440
@@ -26,9 +26,11 @@ secondary = #88c0d0
 alert = #ebcb8b
 
 [bar/ewmhbar]
+monitor = ${env:MONITOR:}
+
 width = 100%
 height = 21
-fixed-center = false
+fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
@@ -48,7 +50,7 @@ font-0 = JetbrainsMonoNerdFont:size=10;2
 font-1 = MaterialIcons:size=11;2
 
 modules-left = ewmh xmonad-layout xwindow
-modules-right = info-kernel cpu memory xbacklight pulseaudio battery date clock
+modules-right = info-kernel cpu memory backlight pulseaudio battery date clock
 
 tray-position = right
 tray-padding = 2
@@ -62,25 +64,24 @@ pin-workspaces = false
 enable-click = true
 enable-scroll = false
 label-active = %name%
-label-active-foreground = #2e3440
-label-active-background = #88c0d0
-label-active-underline = #eceff4
+label-active-foreground = #eceff4
+label-active-background = #434c5e
+label-active-underline = #88c0d0
 label-active-alignment = center
 label-active-padding = 1
 label-empty = %name%
-label-empty-foreground = #eceff4
-label-empty-background = #3b4252
+label-empty-foreground = #4c566a
+label-empty-background = #d02e3440
 label-empty-alignment = center
 label-empty-padding = 1
 label-occupied = %name%
 label-occupied-foreground = #eceff4
-label-occupied-background = #3b4252
-label-occupied-overline = #eceff4
+label-occupied-background = #d02e3440
 label-occupied-alignment = center
 label-occupied-padding = 1
 label-urgent = %name%
 label-urgent-foreground = #2e3440
-label-urgent-background = #ebcb8b
+label-urgent-background = #d0ebcb8b
 label-urgent-alignment = center
 label-urgent-padding = 1
 
@@ -119,8 +120,10 @@ format-prefix-foreground = ${colors.foreground}
 format-underline = #ebcb8b
 label = %percentage_used%%
 
-[module/xbacklight]
-type = internal/xbacklight
+[module/backlight]
+type = internal/backlight
+use-actual-brightness = true
+card = intel_backlight
 ramp-0 = 🌕
 ramp-1 = 🌔
 ramp-2 = 🌓
@@ -164,6 +167,7 @@ ramp-capacity-0 = " "
 ramp-capacity-1 = " "
 ramp-capacity-2 = " "
 ramp-capacity-3 = " "
+ramp-capacity-4 = "  "
 ramp-capacity-foreground = ${colors.foreground}
 
 [module/date]

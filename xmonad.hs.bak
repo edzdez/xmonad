@@ -11,10 +11,8 @@ import XMonad.Hooks.ServerMode
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.WindowSwallowing
 import XMonad.Layout
-import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spacing
 import XMonad.Layout.ThreeColumns
-import XMonad.Layout.ShowWName
 import XMonad.Util.EZConfig
 import XMonad.Util.Run
 import XMonad.Util.Ungrab
@@ -22,22 +20,20 @@ import XMonad.Util.Ungrab
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
+-- TODO:
+-- scratchpads
+
+-- Workspace names
 myWorkspaces :: [[Char]]
 myWorkspaces    = ["1","2","3","4","5","6","7","8","9"]
 
-myShowWNameTheme :: SWNConfig
-myShowWNameTheme = def
-    { swn_font              = "xft:Jetbrains Mono:bold:size=48"
-    , swn_fade              = 1.00
-    , swn_bgcolor           = "#1c1f24"
-    , swn_color             = "#eceff4"
-    }
-
+-- Startup hook
 myStartup :: X ()
 myStartup = do
     spawn "$HOME/.local/share/xmonad/autostart.sh"
 
-myLayout = avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| Full
+-- Layout hook
+myLayout = avoidStruts $ tiled ||| centeredMaster ||| Full
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
@@ -49,8 +45,10 @@ myLayout = avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| Full
      -- Percent of screen to increment by when resizing panes
      delta   = 5/100
 
+-- Event hook (for window swallowing)
 myEvent = swallowEventHook (className =? "Alacritty" <||> className =? "Kitty") (return True)
 
+-- Manage hook
 myManage :: ManageHook
 myManage = composeAll
     [
@@ -80,7 +78,7 @@ main = do
             -- Set startup hook
             startupHook = myStartup,
             -- Set layout hook
-            layoutHook = showWName' myShowWNameTheme $ spacingWithEdge 2 $ myLayout,
+            layoutHook = spacingWithEdge 2 $ myLayout,
             -- Set event hook
             handleEventHook = serverModeEventHook <+> myEvent,
             -- Set manage hook
@@ -88,7 +86,6 @@ main = do
             -- Set log hook
             logHook = dynamicLogWithPP $ def { ppOutput = writeFile "/home/edzdez/.config/xmonad/xmonad.log" }
         }
-
         `removeKeys`
         [
             -- Unbind default terminal binding
@@ -109,7 +106,7 @@ main = do
             -- Unbind mod-tab and mod-shift-tab bindings for changing focus
             (mod4Mask, xK_Tab),
             (mod4Mask .|. shiftMask, xK_Tab),
-
+            
             -- Unbind default swap with master keybind
             (mod4Mask, xK_Return),
 
@@ -126,26 +123,18 @@ main = do
             -- Unbind default recompile keybind
             (mod4Mask, xK_q)
         ]
-
         `additionalKeys`
         [
             -- Spawn dmenu
-            -- ((mod4Mask, xK_d), spawn "j4-dmenu-desktop -term=alacritty --no-generic --dmenu='dmenu -X 4 -Y 4 -W 1912'"),
-            ((mod4Mask, xK_d), spawn "$HOME/.config/rofi/launchers/misc/launcher.sh"),
-            -- Spawn dmenu alt-tab script
-            -- ((mod1Mask, xK_Tab), spawn "$HOME/.config/xmonad/scripts/switch"),
-            ((mod1Mask, xK_Tab), spawn "rofi -no-lazy-grab -show window -theme '.config/rofi/launchers/misc/blurry'"),
+            ((mod4Mask, xK_d), spawn "j4-dmenu-desktop -term=alacritty --no-generic --dmenu='dmenu -X 4 -Y 4 -W 1912'"),
             -- Spawn Web Browser
-            ((mod4Mask, xK_b), spawn "brave"),
+            ((mod4Mask, xK_b), spawn "microsoft-edge-stable"),
             -- Spawn File Manager
             ((mod4Mask, xK_f), spawn "nemo"),
             -- Spawn Terminal
             ((mod4Mask, xK_Return), spawn "alacritty"),
-            ((mod4Mask .|. shiftMask, xK_Return), spawn "kitty"),
             -- Spawn Emacs
-            ((mod4Mask, xK_e), spawn "emacsclient -c"),
-            -- Restart Emacs
-            ((mod4Mask .|. shiftMask, xK_e), spawn "$HOME/.config/xmonad/restartemacs.sh"),
+            ((mod4Mask, xK_t), spawn "emacsclient -c"),
 
             -- Close/Kill Client Binding
             ((mod4Mask .|. shiftMask, xK_q), kill),
@@ -169,7 +158,6 @@ main = do
             -- Layout Switching
             ((mod4Mask .|. mod1Mask, xK_t), sendMessage $ JumpToLayout "Tall"),
             ((mod4Mask .|. mod1Mask, xK_m), sendMessage $ JumpToLayout "Full"),
-            ((mod4Mask .|. mod1Mask, xK_f), sendMessage $ JumpToLayout "SimplestFloat"),
             ((mod4Mask .|. mod1Mask, xK_c), sendMessage $ JumpToLayout "ThreeCol"),
 
             -- Lock screen
@@ -192,5 +180,5 @@ main = do
             -- Recompile XMonad
             ((mod4Mask .|. shiftMask, xK_c), spawn "xmonad --recompile; xmonad --restart"),
             -- Quit XMonad
-            ((mod4Mask .|. mod1Mask, xK_e), io (exitWith ExitSuccess))
+            ((mod4Mask .|. shiftMask, xK_e), io (exitWith ExitSuccess))
         ]
