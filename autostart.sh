@@ -7,12 +7,16 @@ function run {
   fi
 }
 
-run "lxsession"
-run "nitrogen --restore"
-run "picom --experimental-backends"
-run "wmname LG3D"
-run "/usr/lib/xfce4/notifyd/xfce4-notifyd"
-run "nm-applet --indicator"
-run "pa-applet"
+if ! pgrep budgie;
+then
+    run "lxsession"
+    run "nitrogen --restore"
+    run "picom --experimental-backends"
+    run "/usr/lib/xfce4/notifyd/xfce4-notifyd"
+    run "nm-applet --indicator"
+    run "pa-applet"
+    run "$HOME/.config/xmonad/launch_ewmh.sh"
+fi
+
 run "setxkbmap -option caps:escape"
-run "$HOME/.config/xmonad/launch_ewmh.sh"
+run "wmname LG3D"

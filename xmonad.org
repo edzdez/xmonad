@@ -21,12 +21,18 @@ import XMonad.Hooks.ServerMode
 import XMonad.Hooks.UrgencyHook
 import XMonad.Hooks.WindowSwallowing
 import XMonad.Layout
+import XMonad.Layout.BoringWindows
+import XMonad.Layout.Named
 import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spacing
+import XMonad.Layout.SubLayouts
+import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.WindowNavigation
 import XMonad.Layout.ShowWName
 import XMonad.Util.EZConfig
 import XMonad.Util.Run
+import XMonad.Util.Themes
 import XMonad.Util.Ungrab
 
 import qualified XMonad.StackSet as W
@@ -64,11 +70,15 @@ myStartup = do
 ** Layout hook:
 This describes the layouts that XMonad arranges windows in
 #+BEGIN_SRC haskell
-myLayout = avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| Full
+myLayout = boringWindows $ avoidStruts $ tiled ||| centeredMaster ||| simplestFloat ||| tabbed ||| Full
   where
      -- default tiling algorithm partitions the screen into two panes
      tiled   = Tall nmaster delta ratio
      centeredMaster = ThreeColMid nmaster delta ratio
+     tabbed = named "Tabbed" $ tabbedBottomAlways shrinkText $ def
+       { fontName = "xft:JetbrainsMono"
+       , inactiveColor = "#2e3440"
+       }
      -- The default number of windows in the master pane
      nmaster = 1
      -- Default proportion of screen occupied by master pane
@@ -216,6 +226,7 @@ main = do
             ((mod4Mask .|. mod1Mask, xK_m), sendMessage $ JumpToLayout "Full"),
             ((mod4Mask .|. mod1Mask, xK_f), sendMessage $ JumpToLayout "SimplestFloat"),
             ((mod4Mask .|. mod1Mask, xK_c), sendMessage $ JumpToLayout "ThreeCol"),
+            ((mod4Mask .|. mod1Mask, xK_w), sendMessage $ JumpToLayout "Tabbed"),
 
             -- Lock screen
             ((mod4Mask, xK_i), spawn "$HOME/.config/xmonad/lock.sh"),
